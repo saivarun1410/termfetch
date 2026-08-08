@@ -96,6 +96,7 @@ im.show()
 | `fontSize` | `13` | |
 | `keyWidth` | `13` | Characters reserved for the key column. Widen if labels are truncated-looking. |
 | `panelAlign` | `top` | `middle` centres the text against the art — better when you have few rows. |
+| `valueWrap` | `0` | Wrap values longer than this many characters onto continuation rows aligned under the value column. `0` disables it. Without this, one long bio makes the card 1500px wide. |
 
 ### Data
 

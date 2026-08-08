@@ -7,6 +7,7 @@ import json
 import os
 import re
 import sys
+import textwrap
 from pathlib import Path
 
 from . import art as art_mod
@@ -33,6 +34,7 @@ DEFAULTS: dict = {
     "fontSize": 13,
     "keyWidth": 13,
     "panelAlign": "top",
+    "valueWrap": 0,
     "github": None,
     "languageMode": "repos",
     "topLanguages": 5,
@@ -58,9 +60,10 @@ def build_sections(cfg: dict, variables: dict[str, str]) -> list[svg.Section]:
         if title is not None:
             title = gh.apply_templates(str(title), variables)
         fields = []
+        wrap_at = int(cfg["valueWrap"])
         for field in raw.get("fields", []):
             if isinstance(field, str):
-                key, value = "", field
+                key, value = None, field
             elif isinstance(field, (list, tuple)) and len(field) == 2:
                 key, value = field
             elif isinstance(field, dict):
@@ -73,7 +76,14 @@ def build_sections(cfg: dict, variables: dict[str, str]) -> list[svg.Section]:
             # literal "{{bio}}" on the card is worse than an absent line.
             if not value.strip() or UNRESOLVED.search(value):
                 continue
-            fields.append((str(key), value))
+            if wrap_at > 0 and key is not None and len(value) > wrap_at:
+                # Continuation rows carry an empty key so they align under the value
+                # column instead of starting a new label.
+                head, *rest = textwrap.wrap(value, width=wrap_at)
+                fields.append((str(key), head))
+                fields.extend(("", part) for part in rest)
+            else:
+                fields.append((key if key is None else str(key), value))
         if fields or title:
             out.append(svg.Section(title, fields))
     return out

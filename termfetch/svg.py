@@ -118,16 +118,22 @@ def _panel_svg(
 
         for key, value in section.fields:
             y = y0 + row * lh + lh * 0.75
-            if not key:  # a full-width line, no key column
+            if key is None:  # full-width line, no key column
                 out.append(
                     f'<text x="{x0:.2f}" y="{y:.2f}" fill="{theme.value}">{escape(value)}</text>'
                 )
                 widest = max(widest, len(value))
             else:
+                # An empty key is a continuation row: no label, but the value still
+                # lines up under the column above it.
                 vx = x0 + lay.key_width * cw
-                out.append(
-                    f'<text y="{y:.2f}">'
+                label = (
                     f'<tspan x="{x0:.2f}" fill="{theme.key}" font-weight="bold">{escape(key)}</tspan>'
+                    if key
+                    else ""
+                )
+                out.append(
+                    f'<text y="{y:.2f}">{label}'
                     f'<tspan x="{vx:.2f}" fill="{theme.value}">{escape(value)}</tspan>'
                     f"</text>"
                 )

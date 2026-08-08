@@ -200,6 +200,51 @@ def test_cli_renders_without_network(photo, tmp_path):
     assert "Empty" not in doc  # row dropped because {{bio}} resolved to nothing
 
 
+def test_long_values_wrap_onto_aligned_continuation_rows():
+    from termfetch.cli import build_sections
+
+    long = "Backend and platform engineer who turns ambiguous customer problems into reliable software"
+    cfg = {"valueWrap": 30, "sections": [{"title": None, "fields": [["Bio", long]]}]}
+    sections = build_sections(cfg, {})
+
+    fields = sections[0].fields
+    assert len(fields) > 1, "expected the value to wrap"
+    assert fields[0][0] == "Bio"
+    assert all(k == "" for k, _ in fields[1:]), "continuation rows must have an empty key"
+    assert all(len(v) <= 30 for _, v in fields)
+    # nothing lost or duplicated in the wrap
+    assert " ".join(v for _, v in fields) == long
+
+
+def test_wrapping_is_off_by_default():
+    from termfetch.cli import DEFAULTS, build_sections
+
+    long = "x" * 200
+    cfg = {**DEFAULTS, "sections": [{"title": None, "fields": [["K", long]]}]}
+    assert len(build_sections(cfg, {})[0].fields) == 1
+
+
+def test_plain_string_field_spans_full_width():
+    from termfetch.cli import build_sections
+
+    cfg = {"valueWrap": 0, "sections": [{"title": None, "fields": ["a full width line"]}]}
+    key, value = build_sections(cfg, {})[0].fields[0]
+    assert key is None and value == "a full width line"
+
+
+def test_continuation_row_aligns_to_the_value_column():
+    doc = svg.build(
+        None,
+        [svg.Section(None, [("Bio", "first part"), ("", "second part")])],
+        theme.get("github-dark"),
+        svg.Layout(key_width=10),
+    )
+    root = ET.fromstring(doc)
+    ns = "{http://www.w3.org/2000/svg}"
+    xs = [s.attrib["x"] for s in root.iter(f"{ns}tspan") if s.text in ("first part", "second part")]
+    assert len(xs) == 2 and xs[0] == xs[1], "wrapped lines must share the value column"
+
+
 def test_cli_rejects_unknown_config_keys(tmp_path):
     cfg_path = tmp_path / "config.json"
     cfg_path.write_text(json.dumps({"sections": [{"fields": ["x"]}], "colour": "blue"}))
