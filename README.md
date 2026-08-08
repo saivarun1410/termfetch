@@ -103,7 +103,8 @@ im.show()
 | `colors` | – | Override individual theme colours: `{"key": "#ff79c6"}`. |
 | `windowTitle` | `{{username}}@github` | Text in the title bar. Empty string to omit. |
 | `chrome` | `true` | Draw the title bar and traffic-light buttons. |
-| `fontSize` | `13` | |
+| `fontSize` | `13` | Panel text size. |
+| `artFontSize` | matches `fontSize` | Art cell size, set separately. **This is the knob for "sharp but not huge".** Detail comes from `imageCols`; if the art cell is tied to the panel text, adding columns is the same as enlarging the picture until it dwarfs the text. Drop this to 6–8 and raise `imageCols` instead. |
 | `keyWidth` | `13` | Characters reserved for the key column. Widen if labels are truncated-looking. |
 | `panelAlign` | `top` | `middle` centres the text against the art — better when you have few rows. |
 | `valueWrap` | `0` | Wrap values longer than this many characters onto continuation rows aligned under the value column. `0` disables it. Without this, one long bio makes the card 1500px wide. |

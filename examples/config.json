@@ -7,15 +7,18 @@
     780,
     780
   ],
-  "imageCols": 72,
+  "imageCols": 88,
   "charset": "halfblocks",
   "coloredImage": true,
   "contrast": 1.2,
   "gamma": 1.05,
+  "colorStep": 16,
   "theme": "github-dark",
   "windowTitle": "saivarun1410 — zsh",
+  "fontSize": 12,
+  "artFontSize": 6,
   "keyWidth": 14,
-  "panelAlign": "middle",
+  "panelAlign": "top",
   "valueWrap": 46,
   "languageMode": "bytes",
   "topLanguages": 5,
@@ -74,7 +77,5 @@
         ]
       ]
     }
-  ],
-  "fontSize": 12,
-  "colorStep": 16
+  ]
 }

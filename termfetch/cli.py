@@ -32,6 +32,7 @@ DEFAULTS: dict = {
     "windowTitle": "{{username}}@github",
     "chrome": True,
     "fontSize": 13,
+    "artFontSize": None,
     "keyWidth": 13,
     "panelAlign": "top",
     "valueWrap": 0,
@@ -146,6 +147,7 @@ def main(argv: list[str] | None = None) -> int:
         chrome=bool(cfg["chrome"]),
         key_width=int(cfg["keyWidth"]),
         panel_align=str(cfg["panelAlign"]),
+        art_font_size=float(cfg["artFontSize"]) if cfg["artFontSize"] else None,
     )
     title = gh.apply_templates(str(cfg["windowTitle"] or ""), variables)
 

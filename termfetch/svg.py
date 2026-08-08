@@ -52,6 +52,10 @@ class Layout:
     radius: float = 8.0
     key_width: int = 13  # characters reserved for the key column
     panel_align: str = "top"  # "top" or "middle", relative to the art
+    # Art cells are sized independently of the panel text. Tying the two together means
+    # the only way to add detail is to enlarge the picture, which quickly dwarfs the
+    # text block; a smaller art cell buys resolution without buying size.
+    art_font_size: float | None = None
 
     @property
     def char_width(self) -> float:
@@ -62,13 +66,21 @@ class Layout:
         return self.font_size * self.line_height
 
     @property
+    def art_size(self) -> float:
+        return self.art_font_size or self.font_size
+
+    @property
+    def art_char_width(self) -> float:
+        return self.art_size * CHAR_WIDTH_RATIO
+
+    @property
     def art_line(self) -> float:
         """Art rows are exactly one em tall so block glyphs tile without gaps."""
-        return self.font_size
+        return self.art_size
 
 
 def _art_svg(art: Art, x0: float, y0: float, lay: Layout) -> list[str]:
-    cw, lh = lay.char_width, lay.art_line
+    cw, lh = lay.art_char_width, lay.art_line
     out = []
 
     # Half-block cells paint their lower pixel as a rect behind the glyph. Emit all the
@@ -124,7 +136,8 @@ def _art_svg(art: Art, x0: float, y0: float, lay: Layout) -> list[str]:
                 run_chars.append(cell.char)
         flush()
         if spans:
-            out.append(f'<text y="{n(y)}">{"".join(spans)}</text>')
+            # The enclosing group carries the panel's font size, so art rows state theirs.
+            out.append(f'<text y="{n(y)}" font-size="{n(lay.art_size)}">{"".join(spans)}</text>')
     return out
 
 
@@ -194,7 +207,7 @@ def build(
     cw = lay.char_width
 
     top = lay.padding + (lay.chrome_height if lay.chrome else 0)
-    art_w = art.width * cw if art else 0.0
+    art_w = art.width * lay.art_char_width if art else 0.0
     art_h = art.height * lay.art_line if art else 0.0
 
     panel_x = lay.padding + (art_w + lay.gap if art else 0)
