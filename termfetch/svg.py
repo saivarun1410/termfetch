@@ -56,6 +56,11 @@ class Layout:
     # the only way to add detail is to enlarge the picture, which quickly dwarfs the
     # text block; a smaller art cell buys resolution without buying size.
     art_font_size: float | None = None
+    # neofetch's own layout: "Key: ....... value" with the value flushed right against a
+    # fixed-width panel, and section titles trailed by a rule out to that same width.
+    leaders: bool = False
+    panel_chars: int = 0  # fixed panel width in characters; 0 sizes to content
+    title_rule: str = "under"  # "under" (rule on its own line) or "inline" (trails title)
 
     @property
     def char_width(self) -> float:
@@ -150,24 +155,38 @@ def _panel_svg(
     row = 0
     widest = 0
 
+    width_chars = lay.panel_chars or 0
+
     for i, section in enumerate(sections):
         if i:
             row += 0.5  # breathing room between sections
         if section.title is not None:
             y = y0 + row * lh + lh * 0.75
-            out.append(
-                f'<text x="{x0:.2f}" y="{y:.2f}" fill="{theme.title}" '
-                f'font-weight="bold">{escape(section.title)}</text>'
-            )
-            widest = max(widest, len(section.title))
-            row += 1
-            # Underline the section heading the way neofetch does.
-            rule = "─" * max(len(section.title), 1)
-            y = y0 + row * lh + lh * 0.75
-            out.append(
-                f'<text x="{x0:.2f}" y="{y:.2f}" fill="{theme.separator}">{escape(rule)}</text>'
-            )
-            row += 1
+            if lay.title_rule == "inline" and width_chars:
+                # "title ————————————" out to the panel edge.
+                rule = "─" * max(0, width_chars - len(section.title) - 1)
+                out.append(
+                    f'<text y="{y:.2f}">'
+                    f'<tspan x="{x0:.2f}" fill="{theme.title}" font-weight="bold">'
+                    f"{escape(section.title)}</tspan>"
+                    f'<tspan x="{n(x0 + (len(section.title) + 1) * cw)}" fill="{theme.separator}">'
+                    f"{escape(rule)}</tspan></text>"
+                )
+                widest = max(widest, width_chars)
+                row += 1
+            else:
+                out.append(
+                    f'<text x="{x0:.2f}" y="{y:.2f}" fill="{theme.title}" '
+                    f'font-weight="bold">{escape(section.title)}</text>'
+                )
+                widest = max(widest, len(section.title))
+                row += 1
+                rule = "─" * max(len(section.title), 1)
+                y = y0 + row * lh + lh * 0.75
+                out.append(
+                    f'<text x="{x0:.2f}" y="{y:.2f}" fill="{theme.separator}">{escape(rule)}</text>'
+                )
+                row += 1
 
         for key, value in section.fields:
             y = y0 + row * lh + lh * 0.75
@@ -176,6 +195,29 @@ def _panel_svg(
                     f'<text x="{x0:.2f}" y="{y:.2f}" fill="{theme.value}">{escape(value)}</text>'
                 )
                 widest = max(widest, len(value))
+            elif lay.leaders and width_chars:
+                # "Key: ......... value", value flush against the panel's right edge.
+                label = f"{key}:" if key else ""
+                gap_start = len(label) + 1
+                gap_end = width_chars - len(value) - 1
+                dots = "." * max(0, gap_end - gap_start)
+                spans = []
+                if label:
+                    spans.append(
+                        f'<tspan x="{x0:.2f}" fill="{theme.key}" font-weight="bold">'
+                        f"{escape(label)}</tspan>"
+                    )
+                if dots:
+                    spans.append(
+                        f'<tspan x="{n(x0 + gap_start * cw)}" fill="{theme.separator}">'
+                        f"{escape(dots)}</tspan>"
+                    )
+                spans.append(
+                    f'<tspan x="{n(x0 + (width_chars - len(value)) * cw)}" fill="{theme.value}">'
+                    f"{escape(value)}</tspan>"
+                )
+                out.append(f'<text y="{y:.2f}">{"".join(spans)}</text>')
+                widest = max(widest, width_chars)
             else:
                 # An empty key is a continuation row: no label, but the value still
                 # lines up under the column above it.

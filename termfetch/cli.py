@@ -35,6 +35,9 @@ DEFAULTS: dict = {
     "artFontSize": None,
     "keyWidth": 13,
     "panelAlign": "top",
+    "leaders": False,
+    "panelChars": 0,
+    "titleRule": "under",
     "valueWrap": 0,
     "github": None,
     "languageMode": "repos",
@@ -96,11 +99,22 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--out", type=Path, required=True, help="path to write the SVG")
     ap.add_argument("--user", help="GitHub username (overrides config 'github')")
     ap.add_argument("--token", help="GitHub token; defaults to $GITHUB_TOKEN")
+    ap.add_argument("--theme", help="override the config's theme (for emitting light and dark variants)")
+    ap.add_argument(
+        "--invert",
+        choices=("true", "false"),
+        help="override the config's invert flag; a photo often needs opposite values for "
+             "the light and dark variants so the subject stays denser than the background",
+    )
     ap.add_argument("--no-fetch", action="store_true", help="skip the GitHub API; leave variables blank")
     ap.add_argument("--preview", type=Path, help="also write a plain-text version of the art")
     args = ap.parse_args(argv)
 
     cfg = load_config(args.config)
+    if args.theme:
+        cfg["theme"] = args.theme
+    if args.invert:
+        cfg["invert"] = args.invert == "true"
     base = args.config.parent
 
     variables: dict[str, str] = {}
@@ -148,6 +162,9 @@ def main(argv: list[str] | None = None) -> int:
         key_width=int(cfg["keyWidth"]),
         panel_align=str(cfg["panelAlign"]),
         art_font_size=float(cfg["artFontSize"]) if cfg["artFontSize"] else None,
+        leaders=bool(cfg["leaders"]),
+        panel_chars=int(cfg["panelChars"]),
+        title_rule=str(cfg["titleRule"]),
     )
     title = gh.apply_templates(str(cfg["windowTitle"] or ""), variables)
 

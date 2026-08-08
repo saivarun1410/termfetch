@@ -7,74 +7,96 @@
     1200,
     1200
   ],
-  "imageCols": 88,
-  "charset": "halfblocks",
+  "imageCols": 46,
+  "charset": "ascii",
   "coloredImage": true,
-  "contrast": 1.2,
-  "gamma": 1.05,
-  "colorStep": 16,
+  "contrast": 1.8,
+  "gamma": 1.2,
+  "invert": true,
   "theme": "github-dark",
-  "windowTitle": "saivarun1410 — zsh",
-  "fontSize": 12,
-  "artFontSize": 6,
-  "keyWidth": 14,
+  "windowTitle": "",
+  "chrome": false,
+  "fontSize": 13,
+  "leaders": true,
+  "panelChars": 54,
+  "titleRule": "inline",
   "panelAlign": "top",
-  "valueWrap": 46,
   "languageMode": "bytes",
-  "topLanguages": 5,
+  "topLanguages": 4,
   "sections": [
     {
       "title": "{{username}}@github",
       "fields": [
-        [
-          "Name",
-          "{{name}}"
-        ],
-        [
-          "Member for",
-          "{{uptime}}"
-        ],
-        [
-          "Location",
-          "Hyderabad, India"
-        ],
-        [
-          "Open to",
-          "Relocating to the US"
-        ],
-        [
-          "Bio",
-          "Backend & platform engineer. I turn ambiguous customer problems into reliable software, discovery through production."
-        ]
+        {
+          "key": "Name",
+          "value": "{{name}}"
+        },
+        {
+          "key": "Location",
+          "value": "Hyderabad, India"
+        },
+        {
+          "key": "Open to",
+          "value": "Relocating to the US"
+        },
+        {
+          "key": "Created",
+          "value": "{{created}}"
+        },
+        {
+          "key": "Uptime",
+          "value": "{{uptime}}"
+        }
       ]
     },
     {
-      "title": "Stats",
       "fields": [
-        [
-          "Repositories",
-          "{{repos}}"
-        ],
-        [
-          "Stars",
-          "{{stars}}"
-        ],
-        [
-          "Forks",
-          "{{forks}}"
-        ],
-        [
-          "Followers",
-          "{{followers}}"
-        ],
-        [
-          "Joined",
-          "{{created}}"
-        ],
-        [
-          "Languages",
-          "{{languages}}"
-        ]
+        {
+          "key": "Languages",
+          "value": "{{languages}}"
+        },
+        {
+          "key": "Focus",
+          "value": "Backend, platform, 0-1 products"
+        }
+      ]
+    },
+    {
+      "title": "- Contact",
+      "fields": [
+        {
+          "key": "Email",
+          "value": "saivarun1410@gmail.com"
+        },
+        {
+          "key": "GitHub",
+          "value": "github.com/saivarun1410"
+        },
+        {
+          "key": "LinkedIn",
+          "value": "in/saivarun1410"
+        }
+      ]
+    },
+    {
+      "title": "- GitHub Stats",
+      "fields": [
+        {
+          "key": "Repos",
+          "value": "{{repos}}"
+        },
+        {
+          "key": "Stars",
+          "value": "{{stars}}"
+        },
+        {
+          "key": "Followers",
+          "value": "{{followers}}"
+        },
+        {
+          "key": "Forks",
+          "value": "{{forks}}"
+        }
       ]
     }
   ]
