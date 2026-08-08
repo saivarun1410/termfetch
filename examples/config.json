@@ -2,10 +2,10 @@
   "github": "saivarun1410",
   "image": "../assets/example-photo.jpg",
   "imageCrop": [
-    630,
+    400,
     0,
-    780,
-    780
+    1200,
+    1200
   ],
   "imageCols": 88,
   "charset": "halfblocks",
