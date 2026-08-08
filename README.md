@@ -1,24 +1,37 @@
 # termfetch
 
+[![CI](https://github.com/saivarun1410/termfetch/actions/workflows/ci.yml/badge.svg)](https://github.com/saivarun1410/termfetch/actions/workflows/ci.yml)
+[![PyPI](https://img.shields.io/pypi/v/termfetch.svg)](https://pypi.org/project/termfetch/)
+[![Python](https://img.shields.io/pypi/pyversions/termfetch.svg)](https://pypi.org/project/termfetch/)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
 A [neofetch](https://github.com/dylanaraps/neofetch)-style profile card for your GitHub
 README — your photo as coloured terminal art on the left, live GitHub stats on the right,
 rendered to a single self-contained SVG.
 
 ![example card](examples/card.svg)
 
-The card is a **static SVG committed to your repo**, not a hosted image. Nothing calls out to
-a third-party service when someone loads your profile, so there's no rate limit to hit and
-nothing that can go down and leave a broken image on your README. A scheduled GitHub Action
-regenerates it so the numbers stay current.
+## Why termfetch?
+
+- **No image service at view time.** The result is a static SVG committed to your repository.
+- **Your design, not a preset badge.** Use your own photo, fields, colours, crop, and character set.
+- **Live without being fragile.** A scheduled GitHub Action refreshes the card; README visitors
+  never spend your API quota and never see an outage from a third-party renderer.
+- **Portable.** The output is one self-contained SVG that works in GitHub READMEs and anywhere
+  else an image can be embedded.
 
 ## Quickstart
 
 ```bash
-pip install pillow
-git clone https://github.com/saivarun1410/termfetch && cd termfetch
+python -m pip install termfetch
+git clone https://github.com/saivarun1410/termfetch
+cd termfetch
 
-python -m termfetch --config examples/config.json --out card.svg
+termfetch --config examples/config.json --out card.svg
 ```
+
+Prefer an isolated CLI install? Use `pipx install termfetch` or `uv tool install termfetch`.
+To work from a checkout before installing, run `python -m pip install -e .`.
 
 Then in your README:
 
@@ -182,9 +195,12 @@ jobs:
 ## Development
 
 ```bash
-pip install pillow pytest
-python -m pytest
+python -m pip install -e '.[dev]'
+pytest -q
 ```
+
+Contributions are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for the development and pull
+request checklist, and [CHANGELOG.md](CHANGELOG.md) for release notes.
 
 ## Licence
 

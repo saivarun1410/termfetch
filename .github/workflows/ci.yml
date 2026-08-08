@@ -17,8 +17,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-      - run: pip install pillow pytest
-      - run: python -m pytest -q
+      - run: python -m pip install -e '.[dev]'
+      - run: pytest -q
 
   example:
     # The shipped config must keep producing a valid card, offline and unattended.
@@ -28,9 +28,9 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: pip install pillow
+      - run: python -m pip install -e .
       - name: Render the example config
-        run: python -m termfetch --config examples/config.json --out /tmp/card.svg --no-fetch
+        run: termfetch --config examples/config.json --out /tmp/card.svg --no-fetch
       - name: Assert the output is well-formed SVG with art in it
         run: |
           python - <<'PY'
