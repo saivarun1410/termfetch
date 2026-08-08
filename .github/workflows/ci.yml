@@ -1,0 +1,44 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - run: pip install pillow pytest
+      - run: python -m pytest -q
+
+  example:
+    # The shipped config must keep producing a valid card, offline and unattended.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install pillow
+      - name: Render the example config
+        run: python -m termfetch --config examples/config.json --out /tmp/card.svg --no-fetch
+      - name: Assert the output is well-formed SVG with art in it
+        run: |
+          python - <<'PY'
+          import xml.etree.ElementTree as ET
+          NS = "{http://www.w3.org/2000/svg}"
+          root = ET.parse("/tmp/card.svg").getroot()
+          spans = list(root.iter(f"{NS}tspan"))
+          assert len(spans) > 100, f"expected art spans, got {len(spans)}"
+          assert all("x" in s.attrib for s in spans), "every span must be positioned"
+          print(f"ok: {len(spans)} positioned spans")
+          PY

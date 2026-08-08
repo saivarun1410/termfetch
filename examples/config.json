@@ -1,0 +1,38 @@
+{
+  "github": "saivarun1410",
+  "image": "../assets/example-photo.jpg",
+  "imageCrop": [630, 0, 780, 780],
+  "imageCols": 52,
+  "charset": "blocks",
+  "coloredImage": true,
+  "contrast": 1.2,
+  "gamma": 1.05,
+  "theme": "github-dark",
+  "windowTitle": "{{username}} — zsh",
+  "keyWidth": 14,
+  "panelAlign": "middle",
+  "languageMode": "bytes",
+  "topLanguages": 5,
+  "sections": [
+    {
+      "title": "{{username}}@github",
+      "fields": [
+        ["Name", "{{name}}"],
+        ["Member for", "{{uptime}}"],
+        ["Location", "{{location}}"],
+        ["Bio", "{{bio}}"]
+      ]
+    },
+    {
+      "title": "Stats",
+      "fields": [
+        ["Repositories", "{{repos}}"],
+        ["Stars", "{{stars}}"],
+        ["Forks", "{{forks}}"],
+        ["Followers", "{{followers}}"],
+        ["Joined", "{{created}}"],
+        ["Languages", "{{languages}}"]
+      ]
+    }
+  ]
+}
