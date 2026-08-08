@@ -16,6 +16,11 @@ RAMPS = {
     "solid": "█",
 }
 
+# Upper-half block. Each cell carries two pixels — the glyph paints the top one and a
+# background rect paints the bottom — which doubles vertical resolution for free.
+HALF_BLOCK = "▀"
+HALFBLOCK_CHARSET = "halfblocks"
+
 # Width divided by height of one character cell. Must match the geometry the renderer
 # actually uses (svg.CHAR_WIDTH_RATIO over a one-em line height) or the art comes out
 # stretched along one axis.
@@ -26,6 +31,7 @@ DEFAULT_CHAR_ASPECT = 0.6
 class Cell:
     char: str
     color: str  # "#rrggbb"
+    bg: str | None = None  # set for half-block cells: the colour of the lower pixel
 
 
 @dataclass(frozen=True)
@@ -85,9 +91,13 @@ def render(
     ``crop`` is an (x, y, w, h) box applied before scaling. ``cols`` sets the width in
     characters; the row count follows from the image aspect ratio and ``char_aspect``.
     """
-    if charset not in RAMPS:
-        raise ValueError(f"unknown charset {charset!r}; expected one of {sorted(RAMPS)}")
-    ramp = RAMPS[charset]
+    half = charset == HALFBLOCK_CHARSET
+    if not half and charset not in RAMPS:
+        raise ValueError(
+            f"unknown charset {charset!r}; expected one of "
+            f"{sorted([*RAMPS, HALFBLOCK_CHARSET])}"
+        )
+    ramp = RAMPS.get(charset, "")
 
     img = Image.open(path).convert("RGB")
     if crop:
@@ -100,7 +110,26 @@ def render(
         img = ImageEnhance.Brightness(img).enhance(brightness)
 
     rows = max(1, round(cols * char_aspect * img.height / img.width))
-    img = img.resize((cols, rows), Image.LANCZOS)
+    # Half-block cells stack two pixels vertically, so sample twice as many rows.
+    img = img.resize((cols, rows * 2 if half else rows), Image.LANCZOS)
+
+    def colour_at(x: int, y: int) -> str:
+        r, g, b = img.getpixel((x, y))
+        if not colored:
+            return mono_color
+        return "#%02x%02x%02x" % (
+            _quantize_channel(r, color_step),
+            _quantize_channel(g, color_step),
+            _quantize_channel(b, color_step),
+        )
+
+    if half:
+        return Art(
+            [
+                [Cell(HALF_BLOCK, colour_at(x, y * 2), colour_at(x, y * 2 + 1)) for x in range(cols)]
+                for y in range(rows)
+            ]
+        )
 
     grid: list[list[Cell]] = []
     for y in range(rows):

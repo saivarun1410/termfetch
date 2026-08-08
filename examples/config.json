@@ -7,8 +7,8 @@
     780,
     780
   ],
-  "imageCols": 52,
-  "charset": "blocks",
+  "imageCols": 72,
+  "charset": "halfblocks",
   "coloredImage": true,
   "contrast": 1.2,
   "gamma": 1.05,
@@ -74,5 +74,7 @@
         ]
       ]
     }
-  ]
+  ],
+  "fontSize": 12,
+  "colorStep": 16
 }

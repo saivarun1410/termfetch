@@ -61,18 +61,28 @@ Everything lives in one JSON file.
 | `image` | – | Path to the source image, relative to the config file. |
 | `imageCrop` | whole image | `[x, y, width, height]` in source pixels, applied before scaling. |
 | `imageCols` | `56` | Width in characters. Row count follows from the aspect ratio. |
-| `charset` | `blocks` | `ascii`, `blocks`, or `solid`. See below. |
+| `charset` | `blocks` | `ascii`, `blocks`, `solid`, or `halfblocks`. See below. |
 | `coloredImage` | `true` | `false` renders in the theme's single foreground colour. |
 | `contrast` / `brightness` / `gamma` | `1.2` / `1.0` / `1.05` | Applied before sampling. |
 | `colorStep` | `8` | Colour quantisation. Higher merges more cells and shrinks the SVG. |
 | `invert` | `false` | Flip the brightness-to-character mapping. |
 
-**Choosing a charset.** `ascii` uses a ` .:-=+*#%@`-style ramp and looks the most like real
-neofetch output, but it maps brightness to character density — so a backlit photo, where the
-subject is darker than the background, comes out as a hole. `blocks` (` ░▒▓█`) keeps the
-terminal texture while letting colour carry the image, and is the safest default for a
-photograph. `solid` fills every cell with `█`, which is the clearest but reads as pixel art
-rather than terminal art.
+**Choosing a charset.**
+
+- `halfblocks` — **sharpest.** Every cell is `▀`, with the glyph painting the upper pixel and a
+  background rect the lower one, so vertical resolution is doubled for the same card width.
+  Use this if the art looks blocky; the cost is file size, since a photograph has few
+  neighbouring cells that can merge.
+- `blocks` (` ░▒▓█`) — keeps a visible terminal texture while letting colour carry the image.
+  Much smaller output, noticeably coarser.
+- `ascii` (` .:-=+*#%@`) — looks the most like real neofetch output, but it maps brightness to
+  character *density*, so a backlit photo where the subject is darker than the background comes
+  out as a hole. Good for logos and high-key images, risky for portraits.
+- `solid` — every cell `█`. Clear, but reads as pixel art rather than terminal art.
+
+**File size.** A `halfblocks` card is a few hundred KB; `blocks` is a few tens. Raising
+`colorStep` helps only slightly on photographs — the cost is the per-cell geometry, not
+repeated colours — so reducing `imageCols` is the effective lever if size matters.
 
 **Cropping.** The card looks best framed on a face. Find the pixel coordinates however you
 like — this snippet prints a labelled grid over your image:

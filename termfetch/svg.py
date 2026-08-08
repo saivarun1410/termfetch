@@ -20,6 +20,12 @@ FONT_STACK = "ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation
 CHAR_WIDTH_RATIO = 0.6
 
 
+def n(value: float) -> str:
+    """Format a coordinate compactly. Sub-pixel precision beyond 0.1 is invisible and,
+    multiplied across thousands of attributes, is a large share of the file size."""
+    return f"{value:.1f}".rstrip("0").rstrip(".")
+
+
 def escape(text: str) -> str:
     return (
         text.replace("&", "&amp;")
@@ -64,19 +70,53 @@ class Layout:
 def _art_svg(art: Art, x0: float, y0: float, lay: Layout) -> list[str]:
     cw, lh = lay.char_width, lay.art_line
     out = []
+
+    # Half-block cells paint their lower pixel as a rect behind the glyph. Emit all the
+    # rects first so every glyph sits on top, and merge horizontal runs of one colour so
+    # a 60x40 grid costs a few hundred rects rather than 2400. shape-rendering lives on
+    # the group, not each rect — repeated per rect it was tens of KB on its own.
+    rects: list[str] = []
+    # Cells whose two pixels match need no glyph; the rect covers the whole cell.
+    solid: list[list[bool]] = [[False] * len(row) for row in art.rows]
+    for r, row in enumerate(art.rows):
+        c = 0
+        while c < len(row):
+            bg = row[c].bg
+            if bg is None:
+                c += 1
+                continue
+            full = row[c].color == bg
+            start = c
+            while c < len(row) and row[c].bg == bg and (row[c].color == bg) == full:
+                solid[r][c] = full
+                c += 1
+            rects.append(
+                f'<rect x="{n(x0 + start * cw)}" y="{n(y0 + r * lh)}" '
+                f'width="{n((c - start) * cw)}" height="{n(lh)}" fill="{bg}"/>'
+            )
+    if rects:
+        out.append('<g shape-rendering="crispEdges">')
+        out += rects
+        out.append("</g>")
+
     for r, row in enumerate(art.rows):
         # Baseline sits near the bottom of the cell; 0.82em matches typical mono metrics.
         y = y0 + r * lh + lh * 0.82
-        spans, run_start, run_color, run_chars = [], 0, None, []
+        spans: list[str] = []
+        run_start, run_color, run_chars = 0, None, []
 
         def flush():
             if run_chars and run_color:
                 spans.append(
-                    f'<tspan x="{x0 + run_start * cw:.2f}" fill="{run_color}">'
+                    f'<tspan x="{n(x0 + run_start * cw)}" fill="{run_color}">'
                     f"{escape(''.join(run_chars))}</tspan>"
                 )
 
         for c, cell in enumerate(row):
+            if solid[r][c]:  # already fully painted by its rect
+                flush()
+                run_start, run_color, run_chars = c + 1, None, []
+                continue
             if cell.color != run_color:
                 flush()
                 run_start, run_color, run_chars = c, cell.color, [cell.char]
@@ -84,7 +124,7 @@ def _art_svg(art: Art, x0: float, y0: float, lay: Layout) -> list[str]:
                 run_chars.append(cell.char)
         flush()
         if spans:
-            out.append(f'<text y="{y:.2f}">{"".join(spans)}</text>')
+            out.append(f'<text y="{n(y)}">{"".join(spans)}</text>')
     return out
 
 

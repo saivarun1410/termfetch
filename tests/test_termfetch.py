@@ -88,6 +88,48 @@ def test_unknown_charset_rejected(photo):
         art.render(photo, charset="nope")
 
 
+def test_halfblocks_double_the_vertical_samples(photo):
+    plain = art.render(photo, cols=40, charset="blocks", char_aspect=0.6)
+    half = art.render(photo, cols=40, charset="halfblocks", char_aspect=0.6)
+    # same number of text rows, but each carries two pixels
+    assert half.height == plain.height
+    assert all(c.bg is not None for row in half.rows for c in row)
+    assert all(c.char == art.HALF_BLOCK for row in half.rows for c in row)
+
+
+def test_halfblocks_sample_distinct_upper_and_lower_pixels(tmp_path):
+    """A one-pixel-tall stripe must survive, which it cannot without half-blocks."""
+    img = Image.new("RGB", (40, 40), (0, 0, 0))
+    for x in range(40):
+        for y in range(0, 40, 2):
+            img.putpixel((x, y), (255, 255, 255))
+    p = tmp_path / "stripes.png"
+    img.save(p)
+    a = art.render(str(p), cols=40, charset="halfblocks", char_aspect=0.5, color_step=1)
+    assert any(c.color != c.bg for row in a.rows for c in row)
+
+
+def test_halfblock_cells_render_background_rects(photo):
+    a = art.render(photo, cols=20, charset="halfblocks")
+    doc = svg.build(a, [svg.Section(None, [("K", "v")])], theme.get("github-dark"))
+    root = ET.fromstring(doc)
+    ns = "{http://www.w3.org/2000/svg}"
+    # one background rect per colour run, plus the card's own background rect
+    assert len(list(root.iter(f"{ns}rect"))) > 1
+    ET.fromstring(doc)
+
+
+def test_matching_pixel_pair_needs_no_glyph(tmp_path):
+    """A flat image should be all rects and no art glyphs — the size optimisation."""
+    flat = tmp_path / "flat.png"
+    Image.new("RGB", (40, 40), (10, 20, 30)).save(flat)
+    a = art.render(str(flat), cols=20, charset="halfblocks")
+    doc = svg.build(a, [svg.Section(None, [(None, "x")])], theme.get("github-dark"))
+    root = ET.fromstring(doc)
+    ns = "{http://www.w3.org/2000/svg}"
+    assert not any(s.text == art.HALF_BLOCK for s in root.iter(f"{ns}tspan"))
+
+
 # --- svg -------------------------------------------------------------------
 
 
