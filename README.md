@@ -9,7 +9,7 @@ A [neofetch](https://github.com/dylanaraps/neofetch)-style profile card for your
 README — your photo as coloured terminal art on the left, live GitHub stats on the right,
 rendered to a single self-contained SVG.
 
-![example card](https://raw.githubusercontent.com/saivarun1410/termfetch/main/examples/card.svg)
+![termfetch in 15 seconds](https://raw.githubusercontent.com/saivarun1410/termfetch/main/assets/termfetch-demo.gif)
 
 ## Why termfetch?
 
@@ -54,6 +54,19 @@ termfetch --config config.json --out card.svg
 
 `--no-fetch` skips the GitHub API entirely when you only want to iterate on the art. Run
 `termfetch --help` and `termfetch init --help` for every option.
+
+## Share what you made
+
+Post your generated card and tag the project so other developers can discover it. An optional
+credit line for your profile README is:
+
+```markdown
+<sub>Generated with [termfetch](https://github.com/saivarun1410/termfetch).</sub>
+```
+
+Add your card to the community [showcase](https://github.com/saivarun1410/termfetch/blob/main/SHOWCASE.md)
+with a pull request, or use the prepared
+[X post](https://x.com/intent/post?text=I%20made%20my%20GitHub%20profile%20card%20with%20termfetch&url=https%3A%2F%2Fgithub.com%2Fsaivarun1410%2Ftermfetch).
 
 ## Theme gallery
 
