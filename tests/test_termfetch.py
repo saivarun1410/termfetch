@@ -10,7 +10,7 @@ from PIL import Image
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from termfetch import art, gh, svg, theme  # noqa: E402
+from termfetch import art, cli, gh, svg, theme  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 
@@ -216,6 +216,73 @@ def test_count_formatting(n, expected):
 
 
 # --- cli end to end --------------------------------------------------------
+
+
+def test_init_writes_portable_starter_config(photo, tmp_path):
+    cfg_path = tmp_path / "profile" / "termfetch.json"
+    result = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "termfetch",
+            "init",
+            "--user",
+            "octocat",
+            "--image",
+            photo,
+            "--theme",
+            "dracula",
+            "--config",
+            str(cfg_path),
+        ],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+    )
+    assert result.returncode == 0, result.stderr
+    cfg = json.loads(cfg_path.read_text())
+    assert cfg["github"] == "octocat"
+    assert cfg["theme"] == "dracula"
+    assert not Path(cfg["image"]).is_absolute()
+    assert (cfg_path.parent / cfg["image"]).resolve() == Path(photo).resolve()
+    assert not set(cfg) - set(cli.DEFAULTS)
+    assert "termfetch --config" in result.stdout
+
+
+def test_init_refuses_to_overwrite_existing_config(tmp_path):
+    cfg_path = tmp_path / "termfetch.json"
+    cfg_path.write_text("do not replace")
+    result = subprocess.run(
+        [sys.executable, "-m", "termfetch", "init", "--user", "octocat", "--config", str(cfg_path)],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+    )
+    assert result.returncode != 0
+    assert "--force" in result.stderr
+    assert cfg_path.read_text() == "do not replace"
+
+
+def test_cli_uses_first_run_default_paths(photo, tmp_path, monkeypatch):
+    cfg = cli.starter_config("octocat", Path(photo).name)
+    (tmp_path / "termfetch.json").write_text(json.dumps(cfg))
+    monkeypatch.chdir(tmp_path)
+
+    assert cli.main(["--no-fetch"]) == 0
+    out = tmp_path / "termfetch.svg"
+    assert out.is_file()
+    ET.fromstring(out.read_text())
+
+
+def test_cli_reports_package_version():
+    result = subprocess.run(
+        [sys.executable, "-m", "termfetch", "--version"],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+    )
+    assert result.returncode == 0
+    assert result.stdout.strip() == "termfetch 0.2.0"
 
 
 def test_cli_renders_without_network(photo, tmp_path):

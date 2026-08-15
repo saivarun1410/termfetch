@@ -3,47 +3,69 @@
 [![CI](https://github.com/saivarun1410/termfetch/actions/workflows/ci.yml/badge.svg)](https://github.com/saivarun1410/termfetch/actions/workflows/ci.yml)
 [![PyPI](https://img.shields.io/pypi/v/termfetch.svg)](https://pypi.org/project/termfetch/)
 [![Python](https://img.shields.io/pypi/pyversions/termfetch.svg)](https://pypi.org/project/termfetch/)
-[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![MIT license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/saivarun1410/termfetch/blob/main/LICENSE)
 
 A [neofetch](https://github.com/dylanaraps/neofetch)-style profile card for your GitHub
 README — your photo as coloured terminal art on the left, live GitHub stats on the right,
 rendered to a single self-contained SVG.
 
-![example card](examples/card.svg)
+![example card](https://raw.githubusercontent.com/saivarun1410/termfetch/main/examples/card.svg)
 
 ## Why termfetch?
 
-- **No image service at view time.** The result is a static SVG committed to your repository.
-- **Your design, not a preset badge.** Use your own photo, fields, colours, crop, and character set.
-- **Live without being fragile.** A scheduled GitHub Action refreshes the card; README visitors
-  never spend your API quota and never see an outage from a third-party renderer.
-- **Portable.** The output is one self-contained SVG that works in GitHub READMEs and anywhere
-  else an image can be embedded.
+- **Your design, not a preset badge.** Render your photo or logo as ASCII, blocks, or high-resolution half-block art.
+- **No image service at view time.** The result is a static SVG committed to a repository you control.
+- **Live GitHub data at generation time.** Repositories, stars, followers, languages, and account age are templatable.
+- **Live without being fragile.** A scheduled GitHub Action refreshes the card without spending API quota on README views.
+- **Portable and customizable.** Six themes, custom colours, flexible sections, and no JavaScript runtime.
 
 ## Quickstart
 
+Install the published CLI with [`pipx`](https://pipx.pypa.io/) (recommended for command-line tools):
+
+```bash
+pipx install termfetch
+```
+
+Or install it into your current Python environment:
+
 ```bash
 python -m pip install termfetch
-git clone https://github.com/saivarun1410/termfetch
-cd termfetch
-
-termfetch --config examples/config.json --out card.svg
 ```
 
-Prefer an isolated CLI install? Use `pipx install termfetch` or `uv tool install termfetch`.
-To work from a checkout before installing, run `python -m pip install -e .`.
+Create a starter configuration and render your first card:
 
-Then in your README:
+```bash
+termfetch init --user YOUR_GITHUB_USERNAME --image path/to/photo.jpg
+termfetch
+```
+
+This creates `termfetch.json` and `termfetch.svg`. Add the generated card to your profile README:
 
 ```markdown
-![](card.svg)
+![My GitHub profile card](termfetch.svg)
 ```
 
-`--no-fetch` skips the GitHub API entirely if you just want to iterate on the art.
+Already have a configuration or want different filenames?
+
+```bash
+termfetch --config config.json --out card.svg
+```
+
+`--no-fetch` skips the GitHub API entirely when you only want to iterate on the art. Run
+`termfetch --help` and `termfetch init --help` for every option.
+
+## Theme gallery
+
+| GitHub Dark | Dracula |
+| --- | --- |
+| ![GitHub Dark example](https://raw.githubusercontent.com/saivarun1410/termfetch/main/examples/card.svg) | ![Dracula example](https://raw.githubusercontent.com/saivarun1410/termfetch/main/examples/card-dracula.svg) |
+| Nord | GitHub Light |
+| ![Nord example](https://raw.githubusercontent.com/saivarun1410/termfetch/main/examples/card-nord.svg) | ![GitHub Light example](https://raw.githubusercontent.com/saivarun1410/termfetch/main/examples/card-light.svg) |
 
 ## Configuration
 
-Everything lives in one JSON file.
+`termfetch init` creates a generic starter config. Everything remains editable in one JSON file:
 
 ```json
 {
@@ -141,6 +163,10 @@ for a full-width line with no key column.
 
 ## Keeping it current
 
+Copy [`examples/refresh-card.yml`](https://github.com/saivarun1410/termfetch/blob/main/examples/refresh-card.yml) into
+`.github/workflows/refresh-card.yml` in your profile repository, then adjust the config and output
+paths if needed. The complete workflow is reproduced below:
+
 ```yaml
 name: refresh-card
 on:
@@ -154,22 +180,26 @@ jobs:
   refresh:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with: { python-version: "3.12" }
-      - run: pip install pillow
-      - run: python -m termfetch --config config.json --out card.svg
+      - run: python -m pip install termfetch
+      - run: termfetch --config termfetch.json --out termfetch.svg
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add card.svg
+          git add termfetch.svg
           git diff --cached --quiet || { git commit -m "Refresh profile card"; git push; }
 ```
 
 `GITHUB_TOKEN` is optional but raises the API rate limit from 60 requests/hour per IP to
 5,000, which matters if you use `languageMode: "bytes"`.
+
+If the default branch requires pull requests, either configure the workflow to open a PR or write
+the generated card to a dedicated automation branch. Do not place a long-lived personal access
+token in the repository to bypass protection rules.
 
 ## How it works
 
@@ -195,14 +225,17 @@ jobs:
 ## Development
 
 ```bash
+git clone https://github.com/saivarun1410/termfetch.git
+cd termfetch
 python -m pip install -e '.[dev]'
-pytest -q
+python -m pytest -q
 ```
 
-Contributions are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for the development and pull
-request checklist, and [CHANGELOG.md](CHANGELOG.md) for release notes.
+See [CONTRIBUTING.md](https://github.com/saivarun1410/termfetch/blob/main/CONTRIBUTING.md)
+before opening a pull request and
+[CHANGELOG.md](https://github.com/saivarun1410/termfetch/blob/main/CHANGELOG.md) for release history.
 
 ## Licence
 
-MIT — see [LICENSE](LICENSE). The example photograph is not covered by it; replace it with
-your own.
+MIT — see [LICENSE](https://github.com/saivarun1410/termfetch/blob/main/LICENSE). The example
+photograph is not covered by it; replace it with your own.

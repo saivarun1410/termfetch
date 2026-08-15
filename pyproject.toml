@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "termfetch"
-version = "0.1.0"
+version = "0.2.0"
 description = "A neofetch-style profile card for your GitHub README, rendered to a self-contained SVG."
 readme = "README.md"
 requires-python = ">=3.10"
@@ -22,6 +22,7 @@ classifiers = [
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
   "Topic :: Multimedia :: Graphics",
   "Topic :: Software Development :: Libraries :: Python Modules",
   "Topic :: Utilities",
@@ -34,8 +35,8 @@ dev = ["pytest>=8.0"]
 [project.urls]
 Homepage = "https://github.com/saivarun1410/termfetch"
 Repository = "https://github.com/saivarun1410/termfetch"
-Changelog = "https://github.com/saivarun1410/termfetch/blob/main/CHANGELOG.md"
 Issues = "https://github.com/saivarun1410/termfetch/issues"
+Changelog = "https://github.com/saivarun1410/termfetch/blob/main/CHANGELOG.md"
 
 [project.scripts]
 termfetch = "termfetch.cli:main"
