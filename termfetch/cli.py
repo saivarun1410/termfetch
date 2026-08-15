@@ -10,6 +10,7 @@ import sys
 import textwrap
 from pathlib import Path
 
+from . import __version__
 from . import art as art_mod
 from . import gh, svg, theme as theme_mod
 
@@ -93,10 +94,115 @@ def build_sections(cfg: dict, variables: dict[str, str]) -> list[svg.Section]:
     return out
 
 
-def main(argv: list[str] | None = None) -> int:
-    ap = argparse.ArgumentParser(prog="termfetch", description="Generate a neofetch-style profile card as SVG.")
-    ap.add_argument("--config", type=Path, required=True, help="path to config.json")
-    ap.add_argument("--out", type=Path, required=True, help="path to write the SVG")
+def starter_config(username: str, image: str | None, theme: str = "github-dark") -> dict:
+    """Return a useful, non-personal starter configuration."""
+    return {
+        "github": username,
+        "image": image,
+        "imageCols": 46,
+        "charset": "blocks",
+        "coloredImage": True,
+        "contrast": 1.2,
+        "gamma": 1.05,
+        "theme": theme,
+        "windowTitle": "{{username}}@github",
+        "panelAlign": "middle",
+        "valueWrap": 36,
+        "languageMode": "repos",
+        "topLanguages": 5,
+        "sections": [
+            {
+                "title": "{{username}}@github",
+                "fields": [
+                    ["Name", "{{name}}"],
+                    ["Location", "{{location}}"],
+                    ["Bio", "{{bio}}"],
+                    ["Member for", "{{uptime}}"],
+                ],
+            },
+            {
+                "title": "GitHub Stats",
+                "fields": [
+                    ["Repositories", "{{repos}}"],
+                    ["Stars", "{{stars}}"],
+                    ["Followers", "{{followers}}"],
+                    ["Languages", "{{languages}}"],
+                ],
+            },
+        ],
+    }
+
+
+def init_main(argv: list[str]) -> int:
+    ap = argparse.ArgumentParser(
+        prog="termfetch init",
+        description="Create a starter configuration for a GitHub profile card.",
+    )
+    ap.add_argument(
+        "--config",
+        type=Path,
+        default=Path("termfetch.json"),
+        help="config path (default: termfetch.json)",
+    )
+    ap.add_argument("--user", help="GitHub username; prompted for in an interactive terminal")
+    ap.add_argument("--image", type=Path, help="portrait or logo to render; stored relative to the config")
+    ap.add_argument("--theme", choices=sorted(theme_mod.THEMES), default="github-dark")
+    ap.add_argument("--force", action="store_true", help="replace an existing config")
+    args = ap.parse_args(argv)
+
+    username = (args.user or "").strip()
+    if not username and sys.stdin.isatty():
+        username = input("GitHub username: ").strip()
+    if not username:
+        ap.error("--user is required when stdin is not interactive")
+
+    image_arg = args.image
+    if image_arg is None and sys.stdin.isatty():
+        entered = input("Portrait or logo path (optional): ").strip()
+        image_arg = Path(entered) if entered else None
+
+    config_path = args.config.expanduser()
+    if config_path.exists() and not args.force:
+        ap.error(f"{config_path} already exists; use --force to replace it")
+
+    image_value = None
+    if image_arg is not None:
+        image_path = image_arg.expanduser()
+        if not image_path.is_file():
+            ap.error(f"image not found: {image_path}")
+        image_value = Path(
+            os.path.relpath(image_path.resolve(), config_path.resolve().parent)
+        ).as_posix()
+
+    config_path.parent.mkdir(parents=True, exist_ok=True)
+    config_path.write_text(
+        json.dumps(starter_config(username, image_value, args.theme), indent=2) + "\n",
+        encoding="utf-8",
+    )
+    print(f"wrote {config_path}")
+    print(f"next: termfetch --config {config_path} --out termfetch.svg")
+    return 0
+
+
+def render_main(argv: list[str]) -> int:
+    ap = argparse.ArgumentParser(
+        prog="termfetch",
+        description="Generate a neofetch-style GitHub profile card as SVG.",
+        epilog="First time? Run 'termfetch init --help'.",
+    )
+    ap.add_argument("--version", action="version", version=f"%(prog)s {__version__}")
+    ap.add_argument(
+        "--config",
+        type=Path,
+        default=Path("termfetch.json"),
+        help="config path (default: termfetch.json)",
+    )
+    ap.add_argument(
+        "--out",
+        type=Path,
+        default=Path("termfetch.svg"),
+        help="SVG output path (default: termfetch.svg)",
+    )
     ap.add_argument("--user", help="GitHub username (overrides config 'github')")
     ap.add_argument("--token", help="GitHub token; defaults to $GITHUB_TOKEN")
     ap.add_argument("--theme", help="override the config's theme (for emitting light and dark variants)")
@@ -177,6 +283,13 @@ def main(argv: list[str] | None = None) -> int:
         args.preview.write_text(picture.as_text() + "\n", encoding="utf-8")
         print(f"wrote {args.preview}")
     return 0
+
+
+def main(argv: list[str] | None = None) -> int:
+    args = list(sys.argv[1:] if argv is None else argv)
+    if args[:1] == ["init"]:
+        return init_main(args[1:])
+    return render_main(args)
 
 
 if __name__ == "__main__":
