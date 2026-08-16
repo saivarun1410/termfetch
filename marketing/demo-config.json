@@ -1,0 +1,46 @@
+{
+  "github": "saivarun1410",
+  "image": "../assets/example-photo.jpg",
+  "imageCrop": [400, 0, 1200, 1200],
+  "imageCols": 80,
+  "charset": "halfblocks",
+  "coloredImage": true,
+  "contrast": 1.2,
+  "brightness": 1.0,
+  "gamma": 1.05,
+  "colorStep": 4,
+  "invert": false,
+  "theme": "dracula",
+  "windowTitle": "saivarun1410@github",
+  "chrome": true,
+  "fontSize": 13,
+  "artFontSize": 8.5,
+  "keyWidth": 13,
+  "panelAlign": "middle",
+  "leaders": false,
+  "panelChars": 0,
+  "titleRule": "under",
+  "valueWrap": 28,
+  "languageMode": "repos",
+  "topLanguages": 5,
+  "sections": [
+    {
+      "title": "saivarun1410@github",
+      "fields": [
+        ["Name", "Sai Varun"],
+        ["Location", "Hyderabad, India"],
+        ["Bio", "Building open-source developer tools"],
+        ["Member for", "4 years, 6 months"]
+      ]
+    },
+    {
+      "title": "GitHub Stats",
+      "fields": [
+        ["Repositories", "18"],
+        ["Stars", "0"],
+        ["Followers", "1"],
+        ["Languages", "TypeScript, JavaScript, Astro, Python"]
+      ]
+    }
+  ]
+}

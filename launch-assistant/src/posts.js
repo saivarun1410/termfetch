@@ -16,7 +16,7 @@ No hosted image service. Six themes. MIT licensed.
 https://github.com/saivarun1410/termfetch`,
     media: {
       type: "video/mp4",
-      url: "https://raw.githubusercontent.com/saivarun1410/termfetch/main/assets/termfetch-demo.mp4",
+      url: "/termfetch-demo.mp4",
       filename: "termfetch-demo.mp4"
     },
     notes: [
