@@ -1,0 +1,12 @@
+{
+  "id": "/",
+  "name": "Termfetch Launch Assistant",
+  "short_name": "Launch Termfetch",
+  "description": "Review and publish the Termfetch launch campaign from your iPhone.",
+  "start_url": "/?source=homescreen",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#080b0f",
+  "theme_color": "#0b0f14",
+  "categories": ["productivity", "social"]
+}

@@ -1,0 +1,46 @@
+{
+  "github": "saivarun1410",
+  "image": "../assets/example-photo.jpg",
+  "imageCrop": [400, 0, 1200, 1200],
+  "imageCols": 46,
+  "charset": "ascii",
+  "coloredImage": true,
+  "contrast": 1.8,
+  "brightness": 1.0,
+  "gamma": 1.2,
+  "colorStep": 8,
+  "invert": true,
+  "theme": "dracula",
+  "windowTitle": "saivarun1410@github",
+  "chrome": false,
+  "fontSize": 13,
+  "artFontSize": null,
+  "keyWidth": 13,
+  "panelAlign": "top",
+  "leaders": true,
+  "panelChars": 42,
+  "titleRule": "inline",
+  "valueWrap": 18,
+  "languageMode": "repos",
+  "topLanguages": 5,
+  "sections": [
+    {
+      "title": "saivarun1410@github",
+      "fields": [
+        ["Name", "Sai Varun"],
+        ["Location", "Hyderabad, India"],
+        ["Created", "2022-01-22"],
+        ["Uptime", "4 years, 6 months"]
+      ]
+    },
+    {
+      "title": "GitHub Stats",
+      "fields": [
+        ["Repositories", "18"],
+        ["Stars", "0"],
+        ["Followers", "1"],
+        ["Languages", "TypeScript, JavaScript, Astro, Python"]
+      ]
+    }
+  ]
+}

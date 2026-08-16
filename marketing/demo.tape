@@ -27,3 +27,7 @@ Type "termfetch init --user saivarun1410 --image photo.jpg --theme dracula" Ente
 Sleep 900ms
 Type "termfetch" Enter
 Sleep 1400ms
+
+# The final product card is rendered from demo-config.json. It deliberately uses
+# the colored ASCII renderer so the portrait reads as neofetch-style terminal art
+# in both the MP4 and the smaller README GIF.
