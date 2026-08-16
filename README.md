@@ -9,7 +9,9 @@ A [neofetch](https://github.com/dylanaraps/neofetch)-style profile card for your
 README — your photo as coloured terminal art on the left, live GitHub stats on the right,
 rendered to a single self-contained SVG.
 
-![termfetch in 15 seconds](https://raw.githubusercontent.com/saivarun1410/termfetch/main/assets/termfetch-demo.gif)
+[![Watch termfetch generate a neofetch-style GitHub profile card](assets/termfetch-demo.gif)](assets/termfetch-demo.mp4)
+
+*Click the preview to watch the full-quality MP4.*
 
 ## Why termfetch?
 
