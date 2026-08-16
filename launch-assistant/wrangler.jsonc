@@ -1,0 +1,28 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "termfetch-launch-assistant",
+  "main": "src/worker.js",
+  "compatibility_date": "2026-08-15",
+  "workers_dev": true,
+  "preview_urls": false,
+  "assets": {
+    "binding": "ASSETS",
+    "directory": "./public",
+    "not_found_handling": "single-page-application",
+    "run_worker_first": true
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "termfetch-launch-assistant",
+      "database_id": "921731f4-94b8-4948-9884-3a86e9deeb8a"
+    }
+  ],
+  "triggers": {
+    "crons": ["* * * * *"]
+  },
+  "vars": {
+    "VAPID_PUBLIC_KEY": "BDTq34b3JUHWDWKZIRLFn8IRB6QsRaa6oUU9iGHFTXd7sp71xQRK6R4-hzShW8PB-rv016Gs_LENZzof5OkL69Q",
+    "VAPID_SUBJECT": "mailto:saivarun1410@users.noreply.github.com"
+  }
+}

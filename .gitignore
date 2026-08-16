@@ -7,3 +7,9 @@ dist/
 build/
 *.egg-info/
 .DS_Store
+.dev.vars
+launch-assistant/.dev.vars
+launch-assistant/.access.vars
+launch-assistant/node_modules/
+launch-assistant/dist/
+launch-assistant/.wrangler/

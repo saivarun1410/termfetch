@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#0b0f14" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Launch Termfetch" />
+    <meta name="description" content="Review and publish the Termfetch launch campaign from your phone." />
+    <meta property="og:title" content="Termfetch Launch Assistant" />
+    <meta property="og:description" content="Preview. Approve. Post." />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="__ORIGIN__/og.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content="__ORIGIN__/og.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="stylesheet" href="/styles.css" />
+    <title>Termfetch Launch</title>
+  </head>
+  <body>
+    <main class="shell">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">PRIVATE LAUNCH QUEUE</p>
+          <h1>termfetch<span class="cursor">_</span></h1>
+        </div>
+        <div class="status-dot" id="connection-status" aria-label="Checking connection"></div>
+      </header>
+
+      <section class="login-card" id="login-card" hidden>
+        <p class="eyebrow">OWNER ACCESS</p>
+        <h2>Open your private launch queue</h2>
+        <p>Enter the access key once. Your iPhone will keep a secure session for the launch week.</p>
+        <form id="login-form">
+          <label for="access-key">PRIVATE ACCESS KEY</label>
+          <input id="access-key" name="access-key" type="password" autocomplete="current-password" required />
+          <button class="button button-primary" id="login-button" type="submit">Unlock queue</button>
+        </form>
+      </section>
+
+      <section class="install-card protected" id="install-card" hidden>
+        <span class="step-number">01</span>
+        <div>
+          <h2>Install on your iPhone</h2>
+          <p>In Safari, tap <strong>Share</strong>, then <strong>Add to Home Screen</strong>. Open the new icon to enable notifications.</p>
+        </div>
+      </section>
+
+      <section class="notification-card protected" id="notification-card" hidden>
+        <div>
+          <p class="label">NOTIFICATIONS</p>
+          <h2 id="notification-title">Stay on schedule</h2>
+          <p id="notification-copy">Get one alert when each launch post is ready for review.</p>
+        </div>
+        <button class="button button-secondary" id="notification-button" type="button">Enable</button>
+      </section>
+
+      <section class="hero protected" id="hero" aria-labelledby="selected-title" hidden>
+        <div class="schedule-line">
+          <span id="selected-day">DAY —</span>
+          <span id="selected-time">LOADING</span>
+        </div>
+        <div class="hero-heading">
+          <div>
+            <p class="label">NEXT REVIEW</p>
+            <h2 id="selected-title">Loading your launch queue…</h2>
+          </div>
+          <span class="readiness" id="selected-readiness">CHECKING</span>
+        </div>
+
+        <div class="media-frame" id="media-frame" hidden></div>
+
+        <label class="post-label" for="post-copy">POST COPY</label>
+        <textarea id="post-copy" rows="10" spellcheck="true"></textarea>
+        <div class="copy-meta">
+          <span id="character-count">0 characters</span>
+          <button class="text-button" id="reset-copy" type="button">Reset edits</button>
+        </div>
+
+        <div class="notes" id="notes" hidden>
+          <p class="label">BEFORE POSTING</p>
+          <ul id="notes-list"></ul>
+        </div>
+
+        <div class="primary-actions">
+          <button class="button button-primary" id="post-button" type="button">Post on X</button>
+          <button class="button button-quiet" id="copy-button" type="button">Copy text</button>
+        </div>
+
+        <div class="thread" id="thread" hidden>
+          <div class="section-heading">
+            <p class="label">THREAD REPLIES</p>
+            <span id="reply-count"></span>
+          </div>
+          <div id="reply-list"></div>
+        </div>
+      </section>
+
+      <section class="queue-section protected" id="queue-section" hidden>
+        <div class="section-heading">
+          <div>
+            <p class="label">SEVEN-DAY RUN</p>
+            <h2>Launch queue</h2>
+          </div>
+          <span>9:00 PM IST</span>
+        </div>
+        <div class="queue" id="queue" aria-live="polite"></div>
+      </section>
+
+      <footer class="protected" id="footer" hidden>
+        <span>No X password. No paid API.</span>
+        <span class="footer-actions">
+          <button class="text-button" id="logout-button" type="button">Lock app</button>
+          <a href="https://github.com/saivarun1410/termfetch" target="_blank" rel="noreferrer">View repository</a>
+        </span>
+      </footer>
+    </main>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <script type="module" src="/app.js"></script>
+  </body>
+</html>
