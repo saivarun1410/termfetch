@@ -29,5 +29,5 @@ Type "termfetch" Enter
 Sleep 1400ms
 
 # The final product card is rendered from demo-config.json. It deliberately uses
-# the high-detail halfblocks renderer so the portrait remains recognizable in
-# both the MP4 and the smaller README GIF.
+# the colored ASCII renderer so the portrait reads as neofetch-style terminal art
+# in both the MP4 and the smaller README GIF.
