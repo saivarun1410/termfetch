@@ -74,7 +74,7 @@ with a pull request, or use the prepared
 
 | GitHub Dark | Dracula |
 | --- | --- |
-| ![GitHub Dark example](https://raw.githubusercontent.com/saivarun1410/termfetch/main/examples/card.svg) | ![Dracula example](https://raw.githubusercontent.com/saivarun1410/termfetch/main/examples/card-dracula.svg) |
+| ![GitHub Dark example](https://raw.githubusercontent.com/saivarun1410/termfetch/main/examples/card-github-dark.svg) | ![Dracula example](https://raw.githubusercontent.com/saivarun1410/termfetch/main/examples/card-dracula.svg) |
 | Nord | GitHub Light |
 | ![Nord example](https://raw.githubusercontent.com/saivarun1410/termfetch/main/examples/card-nord.svg) | ![GitHub Light example](https://raw.githubusercontent.com/saivarun1410/termfetch/main/examples/card-light.svg) |
 
